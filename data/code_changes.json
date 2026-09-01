@@ -1,0 +1,7 @@
+[
+  {
+    "version": "v2.4.1",
+    "change": "DB_POOL_SIZE changed from 50 to 10"
+  }
+]
+
