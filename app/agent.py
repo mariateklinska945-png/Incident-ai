@@ -45,11 +45,13 @@ At the end, explain:
 2. Most likely root cause
 3. Evidence
 4. Confidence level
+
+Be concise, technical, and evidence-driven.
 """
 )
 
 
-def investigate(question: str):
+def investigate_with_trace(question: str):
     result = agent.invoke({
         "messages": [
             {
@@ -59,12 +61,26 @@ def investigate(question: str):
         ]
     })
 
-    print("\nTools used:")
+    tools_used = []
 
     for message in result["messages"]:
         if hasattr(message, "tool_calls") and message.tool_calls:
             for tool_call in message.tool_calls:
-                print(f"✓ {tool_call['name']}")
+                tools_used.append(tool_call["name"])
 
-    return result["messages"][-1].content
+    return {
+        "report": result["messages"][-1].content,
+        "tools_used": tools_used
+    }
+
+
+def investigate(question: str):
+    result = investigate_with_trace(question)
+
+    print("\nTools used:")
+
+    for tool_name in result["tools_used"]:
+        print(f"✓ {tool_name}")
+
+    return result["report"]
 
